@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file:///media/Documents/Java/libGDX/squared/android/android.iml" filepath="/media/Documents/Java/libGDX/squared/android/android.iml" />
+      <module fileurl="file:///media/Documents/Java/libGDX/squared/core/core.iml" filepath="/media/Documents/Java/libGDX/squared/core/core.iml" />
+      <module fileurl="file:///media/Documents/Java/libGDX/squared/desktop/desktop.iml" filepath="/media/Documents/Java/libGDX/squared/desktop/desktop.iml" />
+    </modules>
+  </component>
+</project>
+
