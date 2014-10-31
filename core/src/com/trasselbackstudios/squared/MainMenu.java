@@ -100,8 +100,12 @@ public class MainMenu extends Menu {
                 dispose();
                 break;
             case 3:
+                game.setScreen(new HelpMenu(game));
+                dispose();
                 break;
             case 4:
+                game.setScreen(new StoryMenu(game));
+                dispose();
                 break;
             default:
                 break;
