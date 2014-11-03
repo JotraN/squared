@@ -92,6 +92,7 @@ public class MainMenu extends Menu {
         switch (selection) {
             // TODO Set up help and story.
             case 1:
+                Level.reset();
                 game.setScreen(new TransitionScreen(game, new Engine(game)));
                 dispose();
                 break;
