@@ -103,6 +103,8 @@ public class Level {
 
     public void drawTime(Squared game) {
         game.font.setColor(0.0f, 0.0f, 0.0f, 1);
+        if(time <= 5)
+            game.font.setColor(0.5f, 0.0f, 0.0f, 1);
         game.font.setScale(0.25f);
         game.font.draw(game.staticBatch, time + "", 10, 470);
     }

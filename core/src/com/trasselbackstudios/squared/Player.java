@@ -2,7 +2,11 @@ package com.trasselbackstudios.squared;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -14,17 +18,32 @@ public class Player extends Rectangle {
     private float gravity = 0.75f;
     private boolean inAir = false;
     private Vector3 touchPos = new Vector3();
+    private Texture spriteSheet;
+    private TextureRegion currentFrame;
+    private Animation walkAnimation;
+    private Animation jumpAnimation;
+    private Animation standAnimation;
+    private float stateTime;
 
     public Player() {
         x = 0;
         y = 50;
         width = 50;
         height = 50;
+
+        spriteSheet = new Texture(Gdx.files.internal("playersheet.png"));
+        int rows = 3, columns = 5;
+        TextureRegion[][] frames = TextureRegion.split(spriteSheet, spriteSheet.getWidth() / columns, spriteSheet.getHeight() / rows);
+        standAnimation = new Animation(0.05f, frames[0]);
+        walkAnimation = new Animation(0.05f, frames[1]);
+        jumpAnimation = new Animation(0.05f, frames[2]);
+        stateTime = 0;
     }
 
-    public void draw(ShapeRenderer shapeRenderer) {
-        shapeRenderer.setColor(0.5f, 0.5f, 0.5f, 1);
-        shapeRenderer.rect(x, y, this.width, this.height);
+    public void draw(Squared game) {
+        game.batch.enableBlending();
+        game.batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        game.batch.draw(currentFrame, x, y);
     }
 
     public void processEvents(OrthographicCamera camera) {
@@ -62,6 +81,7 @@ public class Player extends Rectangle {
     }
 
     public void update(Level level) {
+        updateTextureRegion();
         // TODO Set jump ceiling
         // TODO Can't apply delta as tileMap collision detection doesn't work well with decimal x values
 //        float delta = Math.min(Gdx.graphics.getDeltaTime(), 1.0f/30.0f);
@@ -101,5 +121,22 @@ public class Player extends Rectangle {
         }
 
         if (inAir) velY = velY - gravity;
+    }
+
+    private void updateTextureRegion() {
+        stateTime += Gdx.graphics.getDeltaTime();
+        currentFrame = walkAnimation.getKeyFrame(stateTime, true);
+        if (velY > 0) currentFrame = jumpAnimation.getKeyFrame(stateTime, true);
+        else if (velX > 0) {
+            if(currentFrame.isFlipX()) currentFrame.flip(true, false);
+        }
+        else if (velX < 0){
+            if(!currentFrame.isFlipX()) currentFrame.flip(true, false);
+        }
+        else currentFrame = standAnimation.getKeyFrame(stateTime, true);
+    }
+
+    public void dispose(){
+        spriteSheet.dispose();
     }
 }

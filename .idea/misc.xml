@@ -4,9 +4,7 @@
     <entry_points version="2.0" />
   </component>
   <component name="FrameworkDetectionExcludesConfiguration">
-    <file type="web" url="file:///media/Documents/Java/libGDX/squared/android" />
-    <file type="web" url="file:///media/Documents/Java/libGDX/squared/core" />
-    <file type="web" url="file:///media/Documents/Java/libGDX/squared/desktop" />
+    <file type="web" url="file:///media/Documents/Java/libGDX/squared" />
   </component>
   <component name="IdProvider" IDEtalkID="B2FEE78FAB1BD36BFCB72D35D35F3D33" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="JDK" project-jdk-type="JavaSDK" />

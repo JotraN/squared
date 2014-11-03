@@ -51,12 +51,12 @@ public class Engine implements Screen {
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
         level.drawText(game);
+        player.draw(game);
         game.batch.end();
 
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         level.draw(camera, shapeRenderer);
-        player.draw(shapeRenderer);
         shapeRenderer.end();
     }
 
@@ -88,6 +88,7 @@ public class Engine implements Screen {
 
     @Override
     public void dispose() {
+        player.dispose();
         game.dispose();
         level.dispose();
         bg.dispose();
