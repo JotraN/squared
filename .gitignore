@@ -1,3 +1,7 @@
 *.swp
 *~
-local-properties.mine
+local.properties.mine
+.temp*
+.gradle*
+.idea*
+build/*
