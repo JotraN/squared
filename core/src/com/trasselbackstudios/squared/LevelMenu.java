@@ -6,10 +6,13 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class LevelMenu extends Menu {
     private Texture levelIcon;
+    private int unlocked = 1;
 
     public LevelMenu(Squared game) {
         super(game);
         levelIcon = new Texture(Gdx.files.internal("bg.png"));
+        // Add one for current level.
+        unlocked = Stats.load() + 1;
     }
 
     @Override
@@ -30,9 +33,12 @@ public class LevelMenu extends Menu {
         game.font.setColor(0.1f, 0.1f, 0.1f, 1);
         game.font.setScale(0.5f);
         for (int i = 0; i < Level.max; i++) {
+            if(i >= unlocked)
+                game.font.setColor(0.5f, 0.1f, 0.1f, 1);
             game.font.draw(game.staticBatch, "Level " + (i + 1), x, y);
             menuMap[(int) Math.floor(y / (480 / 3))][(int) Math.floor(x / (800 / 5))] = i + 1;
             game.staticBatch.draw(levelIcon, x, y - 130, 100, 100);
+            game.font.setColor(0.1f, 0.1f, 0.1f, 1);
             x += 200;
         }
         game.staticBatch.end();
@@ -45,10 +51,13 @@ public class LevelMenu extends Menu {
 
     @Override
     protected void processSelection(int selection) {
-        Level.setLevel(selection);
         if (selection > 0) {
-            game.setScreen(new Engine(game));
-            dispose();
+            if(selection <= unlocked) {
+                Level.setLevel(selection);
+                Level.reset();
+                game.setScreen(new Engine(game));
+                dispose();
+            }
         }
     }
 
