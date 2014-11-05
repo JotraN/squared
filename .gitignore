@@ -5,3 +5,4 @@ local.properties.mine
 .gradle*
 .idea*
 build/*
+*/build/*
