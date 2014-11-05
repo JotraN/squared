@@ -1,45 +1,46 @@
 package com.trasselbackstudios.squared;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 
 public class LevelMenu extends Menu {
-    private Texture levelIcon;
     private int unlocked = 1;
 
     public LevelMenu(Squared game) {
         super(game);
-        levelIcon = new Texture(Gdx.files.internal("bg.png"));
         // Add one for current level.
         unlocked = Stats.load() + 1;
     }
 
     @Override
     protected void setup() {
-        menuMap = new int[][]{
-                {0, 0, 0, 0, 0},
-                {0, 1, 2, 3, 0},
-                {0, 0, 0, 0, 0},
-        };
-
+        menuMap = new int[Level.max + 2][5];
+        int index = 1;
+        for (int i = menuMap.length - 1; i > 0; i--) {
+            if (i < menuMap.length - 1 && index <= Level.max) {
+                // draw levels in middle.
+                menuMap[i][2] = index;
+                index++;
+            }
+        }
         background = new Color(0.4f, 0.4f, 0.4f, 1);
     }
 
     protected void drawMenu() {
-        float x = game.staticCamera.viewportWidth / 5;
-        float y = game.staticCamera.viewportHeight / 3 * 2;
         game.staticBatch.begin();
-        game.font.setColor(0.1f, 0.1f, 0.1f, 1);
         game.font.setScale(0.5f);
-        for (int i = 0; i < Level.max; i++) {
-            if(i >= unlocked)
-                game.font.setColor(0.5f, 0.1f, 0.1f, 1);
-            game.font.draw(game.staticBatch, "Level " + (i + 1), x, y);
-            menuMap[(int) Math.floor(y / (480 / 3))][(int) Math.floor(x / (800 / 5))] = i + 1;
-            game.staticBatch.draw(levelIcon, x, y - 130, 100, 100);
-            game.font.setColor(0.1f, 0.1f, 0.1f, 1);
-            x += 200;
+        float padding = 50;
+        for (int i = 0; i < menuMap.length; i++) {
+            for (int j = 0; j < menuMap[0].length; j++) {
+                game.font.setColor(0.1f, 0.1f, 0.1f, 1);
+                if (menuMap[i][j] != 0) {
+                    String sym = "+";
+                    if (menuMap[i][j] > unlocked) {
+                        game.font.setColor(0.5f, 0.1f, 0.1f, 1);
+                        sym = "-";
+                    }
+                    game.font.draw(game.staticBatch, sym + menuMap[i][j], column * j + padding, row * i + padding);
+                }
+            }
         }
         game.staticBatch.end();
     }
@@ -52,7 +53,7 @@ public class LevelMenu extends Menu {
     @Override
     protected void processSelection(int selection) {
         if (selection > 0) {
-            if(selection <= unlocked) {
+            if (selection <= unlocked) {
                 Level.setLevel(selection);
                 Level.reset();
                 game.setScreen(new Engine(game));
@@ -64,6 +65,5 @@ public class LevelMenu extends Menu {
     @Override
     public void dispose() {
         super.dispose();
-        levelIcon.dispose();
     }
 }
