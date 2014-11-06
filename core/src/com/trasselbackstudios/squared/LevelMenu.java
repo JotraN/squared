@@ -9,7 +9,7 @@ public class LevelMenu extends Menu {
     public LevelMenu(Squared game) {
         super(game);
         // Add one for current level.
-        unlocked = Stats.load() + 1;
+        unlocked = Stats.load();
     }
 
     @Override

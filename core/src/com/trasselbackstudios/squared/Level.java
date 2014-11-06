@@ -89,9 +89,9 @@ public class Level {
             game.setScreen(new TransitionScreen(game, new Congratulations(game)));
             return;
         }
-        Stats.save(current);
         time = maxTime;
         current++;
+        Stats.save(current);
         dispose();
         loadLevel();
         game.setScreen(new TransitionScreen(game, currentEngine));
