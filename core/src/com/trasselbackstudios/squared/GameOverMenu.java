@@ -50,6 +50,8 @@ public class GameOverMenu extends Menu {
         game.font.setColor(0.7f, 0.7f, 0.7f, 1);
         game.font.draw(game.staticBatch, "gameover", column * 0 + 50, row * 1);
         game.font.setScale(0.5f);
+        game.font.draw(game.staticBatch, "time ran out", column * 0 + 50, row * 2 - padding);
+        game.font.setScale(0.5f);
         game.font.draw(game.staticBatch, "restart:", column * 4, row * 0 + padding);
         game.font.draw(game.staticBatch, "no", column * 5, row * 0 + padding);
         game.font.draw(game.staticBatch, "yes", column * 6, row * 0 + padding);

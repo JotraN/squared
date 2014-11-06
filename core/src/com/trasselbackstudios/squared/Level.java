@@ -33,9 +33,10 @@ public class Level {
         FileHandle file = Gdx.files.internal("levels/map_0" + current);
         String[] rows = file.readString().split("\\n");
         name = rows[0];
-        // Subtract one for name line in file.
-        tileMap = new String[rows.length - 1][rows[1].split(", ").length];
-        for (int i = 0, j = 1; i < tileMap.length; i++, j++) {
+        time = Integer.parseInt(rows[1]);
+        // Subtract two for name and time line in file.
+        tileMap = new String[rows.length - 2][rows[2].split(", ").length];
+        for (int i = 0, j = 2; i < tileMap.length; i++, j++) {
             tileMap[i] = rows[j].split(", ");
         }
         setupLevel();

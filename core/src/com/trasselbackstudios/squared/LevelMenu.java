@@ -1,6 +1,7 @@
 package com.trasselbackstudios.squared;
 
 import com.badlogic.gdx.graphics.Color;
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
 public class LevelMenu extends Menu {
     private int unlocked = 1;
@@ -22,26 +23,28 @@ public class LevelMenu extends Menu {
                 index++;
             }
         }
-        background = new Color(0.4f, 0.4f, 0.4f, 1);
+        menuMap[0][0] = -1;
+        background = new Color(0.2f, 0.1f, 0.5f, 1);
     }
 
     protected void drawMenu() {
         game.staticBatch.begin();
-        game.font.setScale(0.5f);
         float padding = 50;
+        game.font.setScale(1.0f);
+        game.font.draw(game.staticBatch, "levels", column * 2, row * 5 - padding);
+        game.font.setScale(0.5f);
         for (int i = 0; i < menuMap.length; i++) {
-            for (int j = 0; j < menuMap[0].length; j++) {
-                game.font.setColor(0.1f, 0.1f, 0.1f, 1);
-                if (menuMap[i][j] != 0) {
-                    String sym = "+";
-                    if (menuMap[i][j] > unlocked) {
-                        game.font.setColor(0.5f, 0.1f, 0.1f, 1);
-                        sym = "-";
-                    }
-                    game.font.draw(game.staticBatch, sym + menuMap[i][j], column * j + padding, row * i + padding);
+            game.font.setColor(0.7f, 0.7f, 0.7f, 1);
+            if (menuMap[i][2] != 0) {
+                String sym = "+";
+                if (menuMap[i][2] > unlocked) {
+                    game.font.setColor(0.7f, 0.7f, 0.1f, 1);
+                    sym = "-";
                 }
+                game.font.draw(game.staticBatch, "[" + sym + menuMap[i][2] + "]", column * 2 + padding / 2, row * i + padding);
             }
         }
+        game.font.draw(game.staticBatch, "back", column * 0 + padding, row * 0 + padding);
         game.staticBatch.end();
     }
 
@@ -52,11 +55,15 @@ public class LevelMenu extends Menu {
 
     @Override
     protected void processSelection(int selection) {
+        if(selection == -1){
+            game.setScreen(new MainMenu(game));
+            dispose();
+        }
         if (selection > 0) {
             if (selection <= unlocked) {
                 Level.setLevel(selection);
                 Level.reset();
-                game.setScreen(new Engine(game));
+                game.setScreen(new TransitionScreen(game, new Engine(game)));
                 dispose();
             }
         }

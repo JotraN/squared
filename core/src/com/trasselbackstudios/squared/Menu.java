@@ -51,7 +51,9 @@ public abstract class Menu implements Screen {
             game.staticCamera.unproject(touchPos);
             int row = (int) Math.floor(touchPos.y / (480 / menuMap.length));
             int col = (int) Math.floor(touchPos.x / (800 / menuMap[0].length));
-            int selection = menuMap[row][col];
+            int selection = 0;
+            if(row < menuMap.length && col < menuMap[0].length)
+                selection = menuMap[row][col];
             processSelection(selection);
         }
     }
