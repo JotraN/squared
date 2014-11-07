@@ -8,7 +8,6 @@ public class LevelMenu extends Menu {
 
     public LevelMenu(Squared game) {
         super(game);
-        // Add one for current level.
         unlocked = Stats.load();
     }
 
@@ -30,8 +29,8 @@ public class LevelMenu extends Menu {
     protected void drawMenu() {
         game.staticBatch.begin();
         float padding = 50;
-        game.font.setScale(1.0f);
-        game.font.draw(game.staticBatch, "levels", column * 2, row * 5 - padding);
+        game.font.setScale(1f);
+        game.font.draw(game.staticBatch, "levels", column * 0 + padding, row * (Level.max + 1) + padding);
         game.font.setScale(0.5f);
         for (int i = 0; i < menuMap.length; i++) {
             game.font.setColor(0.7f, 0.7f, 0.7f, 1);

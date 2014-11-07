@@ -10,7 +10,9 @@ import com.badlogic.gdx.utils.Timer;
 public class Level {
     public static final String PLATFORM = "1";
     public static final String DOOR = "2";
-    public static final int max = 3;
+    public static final String ENEMY = "3";
+    public static final String RED = "4";
+    public static final int max = 4;
     private static int current = 1;
     private static int maxTime = 20;
     private static int time = maxTime;
@@ -19,6 +21,7 @@ public class Level {
     private String name = "";
     private String[][] tileMap;
     private Array<Block> blocks = new Array<Block>();
+    private Array<Block> enemies = new Array<Block>();
     private final Squared game;
     private final Engine currentEngine;
 
@@ -51,6 +54,8 @@ public class Level {
                     blocks.add(new Block(x, y, blockSize, blockSize, Block.PLATFORM));
                 else if (tileMap[i][j].equals(DOOR))
                     blocks.add(new Block(x, y, blockSize, blockSize, Block.DOOR));
+                else if (tileMap[i][j].equals(RED))
+                    enemies.add(new Enemy(x, y, blockSize, blockSize, Enemy.RED));
                 x += blockSize;
             }
             x = 0;
@@ -66,12 +71,19 @@ public class Level {
             if (onScreen)
                 block.draw(shapeRenderer);
         }
+        for (Block enemy : enemies) {
+            boolean onScreen = camera.position.x + 150 > enemy.x && enemy.x > cameraOffsetLeft;
+            if (onScreen)
+                enemy.draw(shapeRenderer);
+        }
     }
 
-    // TODO enemies need updating.
     public void update() {
         if(time <= 0)
             game.setScreen(new TransitionScreen(game, new GameOverMenu(game)));
+        for (Block enemy : enemies) {
+            enemy.update(tileMap);
+        }
     }
 
     public void dispose() {
@@ -81,6 +93,10 @@ public class Level {
 
     public String[][] getTileMap() {
         return tileMap;
+    }
+
+    public Array<Block> getEnemies(){
+        return enemies;
     }
 
     public void changeLevel() {
@@ -140,5 +156,9 @@ public class Level {
 
     public static void reset(){
         time = maxTime;
+    }
+
+    public void end(){
+        time = 0;
     }
 }

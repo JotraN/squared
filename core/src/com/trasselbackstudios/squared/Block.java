@@ -22,5 +22,5 @@ public class Block extends Rectangle {
         shapeRenderer.rect(x, y, width, height);
     }
 
-    public void update(){};
+    public void update(String[][] tileMap){};
 }

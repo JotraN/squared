@@ -7,22 +7,22 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 
 public class Player extends Rectangle {
     private float velX = 0, velY = 0;
-    private float speed = 5;
-    private float jump = 10;
-    private float gravity = 0.75f;
+    private final float SPEED = 5;
+    private final float JUMP = 10;
+    private final float GRAVITY = 0.75f;
     private boolean inAir = false;
     private Vector3 touchPos = new Vector3();
     private Texture spriteSheet;
     private TextureRegion currentFrame;
-    private Animation walkAnimation;
-    private Animation jumpAnimation;
-    private Animation standAnimation;
+    private final Animation STANDING;
+    private final Animation WALKING;
+    private final Animation JUMPING;
     private float stateTime;
 
     public Player() {
@@ -34,9 +34,9 @@ public class Player extends Rectangle {
         spriteSheet = new Texture(Gdx.files.internal("playersheet.png"));
         int rows = 3, columns = 5;
         TextureRegion[][] frames = TextureRegion.split(spriteSheet, spriteSheet.getWidth() / columns, spriteSheet.getHeight() / rows);
-        standAnimation = new Animation(0.05f, frames[0]);
-        walkAnimation = new Animation(0.05f, frames[1]);
-        jumpAnimation = new Animation(0.05f, frames[2]);
+        STANDING = new Animation(0.05f, frames[0]);
+        WALKING = new Animation(0.05f, frames[1]);
+        JUMPING = new Animation(0.05f, frames[2]);
         stateTime = 0;
     }
 
@@ -51,11 +51,11 @@ public class Player extends Rectangle {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
             if (touchPos.x > x + camera.viewportWidth / 3)
-                velX = speed;
+                velX = SPEED;
             else if (touchPos.x < x - camera.viewportWidth / 3)
-                velX = -speed;
+                velX = -SPEED;
             else if (!inAir) {
-                velY = jump;
+                velY = JUMP;
                 inAir = true;
             }
         } else {
@@ -66,18 +66,17 @@ public class Player extends Rectangle {
         boolean secondTouch = Gdx.input.isTouched(1);
         if (secondTouch) {
             if (!inAir && Gdx.input.isTouched(0)) {
-                velY = jump;
+                velY = JUMP;
                 inAir = true;
             }
         } else {
-            if (!inAir && velY != jump)
+            if (!inAir && velY != JUMP)
                 velY = 0;
         }
 
-        // TODO Update PC controls
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) velX = -speed;
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) velX = speed;
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) if (!inAir) velY = jump;
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) velX = -SPEED;
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) velX = SPEED;
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) if (!inAir) velY = JUMP;
     }
 
     public void update(Level level) {
@@ -86,6 +85,7 @@ public class Player extends Rectangle {
         // TODO Can't apply delta as tileMap collision detection doesn't work well with decimal x values
 //        float delta = Math.min(Gdx.graphics.getDeltaTime(), 1.0f/30.0f);
 //        velX *= delta;
+        boolean checkEnemies = false;
         x += velX;
         String[][] tileMap = level.getTileMap();
         int blockWidth = 50;
@@ -101,9 +101,10 @@ public class Player extends Rectangle {
             x -= velX;
         else if (tileMap[rowBottom][col].equals(Level.DOOR) || tileMap[rowTop][col].equals(Level.DOOR)) {
             x = 0;
-            y = 50;
             level.changeLevel();
-        }
+        } else if (tileMap[rowBottom][col].equals(Level.ENEMY) || tileMap[rowTop][col].equals(Level.ENEMY)
+                || tileMap[rowBottom][col].equals(Level.RED) || tileMap[rowTop][col].equals(Level.RED))
+            checkEnemies = true;
 
         y += velY;
         inAir = true;
@@ -116,27 +117,34 @@ public class Player extends Rectangle {
             inAir = false;
         } else if (tileMap[row][leftCol].equals(Level.DOOR) || tileMap[row][rightCol].equals(Level.DOOR)) {
             x = 0;
-            y = 50;
             level.changeLevel();
+        } else if (tileMap[rowBottom][col].equals(Level.ENEMY) || tileMap[rowTop][col].equals(Level.ENEMY)
+                || tileMap[rowBottom][col].equals(Level.RED) || tileMap[rowTop][col].equals(Level.RED))
+            checkEnemies = true;
+
+        if (checkEnemies) {
+            Array<Block> enemies = level.getEnemies();
+            for (Block enemy : enemies) {
+                if (x < enemy.x + enemy.width && x + width > enemy.x && y < enemy.y + enemy.height && y + height > enemy.y)
+                    x = 0;
+            }
         }
 
-        if (inAir) velY = velY - gravity;
+        if (inAir) velY = velY - GRAVITY;
     }
 
     private void updateTextureRegion() {
         stateTime += Gdx.graphics.getDeltaTime();
-        currentFrame = walkAnimation.getKeyFrame(stateTime, true);
-        if (velY > 0) currentFrame = jumpAnimation.getKeyFrame(stateTime, true);
+        currentFrame = WALKING.getKeyFrame(stateTime, true);
+        if (velY > 0) currentFrame = JUMPING.getKeyFrame(stateTime, true);
         else if (velX > 0) {
-            if(currentFrame.isFlipX()) currentFrame.flip(true, false);
-        }
-        else if (velX < 0){
-            if(!currentFrame.isFlipX()) currentFrame.flip(true, false);
-        }
-        else currentFrame = standAnimation.getKeyFrame(stateTime, true);
+            if (currentFrame.isFlipX()) currentFrame.flip(true, false);
+        } else if (velX < 0) {
+            if (!currentFrame.isFlipX()) currentFrame.flip(true, false);
+        } else currentFrame = STANDING.getKeyFrame(stateTime, true);
     }
 
-    public void dispose(){
+    public void dispose() {
         spriteSheet.dispose();
     }
 }
