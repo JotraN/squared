@@ -2,6 +2,7 @@ package com.trasselbackstudios.squared;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -24,6 +25,8 @@ public class Player extends Rectangle {
     private final Animation WALKING;
     private final Animation JUMPING;
     private float stateTime;
+    private final Sound jumpSnd;
+    private final Sound doorSnd;
 
     public Player() {
         x = 0;
@@ -38,6 +41,9 @@ public class Player extends Rectangle {
         WALKING = new Animation(0.05f, frames[1]);
         JUMPING = new Animation(0.05f, frames[2]);
         stateTime = 0;
+
+        jumpSnd = Gdx.audio.newSound(Gdx.files.internal("sounds/jump.wav"));
+        doorSnd = Gdx.audio.newSound(Gdx.files.internal("sounds/door.wav"));
     }
 
     public void draw(Squared game) {
@@ -80,6 +86,9 @@ public class Player extends Rectangle {
     }
 
     public void update(Level level) {
+        if(velY == JUMP)
+            jumpSnd.play();
+
         updateTextureRegion();
         // TODO Set jump ceiling
         // TODO Can't apply delta as tileMap collision detection doesn't work well with decimal x values
@@ -102,6 +111,7 @@ public class Player extends Rectangle {
         else if (tileMap[rowBottom][col].equals(Level.DOOR) || tileMap[rowTop][col].equals(Level.DOOR)) {
             x = 0;
             level.changeLevel();
+            doorSnd.play();
         } else if (tileMap[rowBottom][col].equals(Level.ENEMY) || tileMap[rowTop][col].equals(Level.ENEMY)
                 || tileMap[rowBottom][col].equals(Level.RED) || tileMap[rowTop][col].equals(Level.RED))
             checkEnemies = true;
@@ -118,6 +128,7 @@ public class Player extends Rectangle {
         } else if (tileMap[row][leftCol].equals(Level.DOOR) || tileMap[row][rightCol].equals(Level.DOOR)) {
             x = 0;
             level.changeLevel();
+            doorSnd.play();
         } else if (tileMap[rowBottom][col].equals(Level.ENEMY) || tileMap[rowTop][col].equals(Level.ENEMY)
                 || tileMap[rowBottom][col].equals(Level.RED) || tileMap[rowTop][col].equals(Level.RED))
             checkEnemies = true;
@@ -146,5 +157,7 @@ public class Player extends Rectangle {
 
     public void dispose() {
         spriteSheet.dispose();
+        jumpSnd.dispose();
+        doorSnd.dispose();
     }
 }

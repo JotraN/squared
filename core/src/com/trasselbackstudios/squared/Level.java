@@ -1,6 +1,7 @@
 package com.trasselbackstudios.squared;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -24,11 +25,13 @@ public class Level {
     private Array<Block> enemies = new Array<Block>();
     private final Squared game;
     private final Engine currentEngine;
+    private final Sound timeLow;
 
     public Level(Squared game, Engine currentEngine) {
         this.game = game;
         this.currentEngine = currentEngine;
         loadLevel();
+        timeLow = Gdx.audio.newSound(Gdx.files.internal("sounds/time.wav"));
     }
 
     private void loadLevel() {
@@ -84,6 +87,8 @@ public class Level {
         for (Block enemy : enemies) {
             enemy.update(tileMap);
         }
+        if(time == 5)
+            timeLow.setLooping(timeLow.play(), true);
     }
 
     public void dispose() {
