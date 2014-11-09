@@ -13,6 +13,7 @@ public abstract class Menu implements Screen {
             {0, 0, 0},
     };
     private Vector3 touchPos;
+    private static boolean backPressed = true;
     protected Color background = Color.WHITE;
     protected float width;
     protected float height;
@@ -27,6 +28,7 @@ public abstract class Menu implements Screen {
         height = this.game.staticCamera.viewportHeight;
         column = width / menuMap[0].length;
         row = height / menuMap.length;
+        Gdx.input.setCatchBackKey(true);
     }
 
     // Setup menuMap and background.
@@ -42,10 +44,14 @@ public abstract class Menu implements Screen {
     }
 
     private void processEvents() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.BACK) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+        if((Gdx.input.isKeyPressed(Input.Keys.BACK) && !backPressed) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            backPressed = true;
             back();
             dispose();
         }
+        if(backPressed && !Gdx.input.isKeyPressed(Input.Keys.BACK))
+            backPressed = false;
+
         if (Gdx.input.justTouched()) {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             game.staticCamera.unproject(touchPos);

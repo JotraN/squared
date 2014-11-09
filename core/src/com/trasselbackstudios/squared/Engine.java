@@ -24,11 +24,12 @@ public class Engine implements Screen {
         player = new Player();
         level = new Level(game, this);
         shapeRenderer = new ShapeRenderer();
+        Gdx.input.setCatchBackKey(true);
     }
 
     @Override
     public void render(float delta) {
-        if(Gdx.input.isKeyJustPressed(Input.Keys.BACK) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+        if(Gdx.input.isKeyPressed(Input.Keys.BACK) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.setScreen(new PauseMenu(game, this));
             Level.pauseTimer();
         }
